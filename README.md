@@ -54,7 +54,29 @@ Open **http://localhost:8080** in multiple browser tabs to see:
 
 ---
 
+## Workflow (high-level)
+
+```mermaid
+graph TD
+  UI[Browser UI
+ static/index.html] -->|1) send JSON| WS[WebSocket /ws]
+  WS -->|2) routes by type| HUB[Hub (hub.go)
+ clients map + rooms]
+
+  HUB -->|3a) unicast| C1[Target Client Send channel]
+  HUB -->|3b) broadcast| ALL[All Client Send channels]
+  HUB -->|3c) multicast| ROOM[Room members]
+
+  C1 -->|4) websocket frame| UI2[All browsers/clients]
+  ALL --> UI2
+  ROOM --> UI2
+
+  UI -->|HTTP poll| API[Echo REST API (/api/clients)]
+  API --> HUB
+```
+
 ## WebSocket protocol
+
 
 Connect to:
 
